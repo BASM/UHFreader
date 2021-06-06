@@ -12,7 +12,7 @@ Works fine base API:
 * Lock
 
 
-Works fine card API:
+Works fine reader API:
 * GetReaderInformation
 * Beep
 
