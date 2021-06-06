@@ -29,27 +29,27 @@ Not implemented:
 * KillTag 
 * BlockErase 
 * All NXP UCODE tags:
-** ReadProtect
-** ProtectNoEPC
-** ResetReadProtect
-** CheckReadProtect
-** EasAlarm
-** CheckEasAlarm
-** BlockLock
-** InventorySingle
-** BlcokWrite
+  * ReadProtect
+  * ProtectNoEPC
+  * ResetReadProtect
+  * CheckReadProtect
+  * EasAlarm
+  * CheckEasAlarm
+  * BlockLock
+  * InventorySingle
+  * BlcokWrite
 * All 18000-6B COMMAND:
-** InvSignal6B
-** InvMulti6b
-** ReadData6b
-** WriteData6b
-** CheckLock6b
-** Lock6b
+  * InvSignal6B
+  * InvMulti6b
+  * ReadData6b
+  * WriteData6b
+  * CheckLock6b
+  * Lock6b
 * Some reader funcitons:
-** SetRegion
-** SetAddress
-** SetScantime
-** BaudRate
-** SetPower
+  * SetRegion
+  * SetAddress
+  * SetScantime
+  * BaudRate
+  * SetPower
 
 
