@@ -541,11 +541,20 @@ int CheckAndFix(uhrdev_t *uhr, uint64_t MasterPass[2]) {
     TagTID2tag(&tidtag, &taginfo, &TID);
 
     if (memcmp(&tidtag, &tags[0], 13)==0) {
+      fixed=1;
     } else {
       int singlemode=0;
       if (count==1) singlemode=1;
       status = TagChangeEPC(uhr, tag, &tidtag, singlemode);
       if (status==UHRERR_GOOD) fixed=1;
+    }
+    if (fixed) {
+      printf("TAG INFO: %x\n", taginfo.raw&0xfffff);
+      if ((taginfo.raw&0xfffff)==0x180e2) { //Monza R6 do not supported passowrds
+        printf("Minoza R6 send to WG without pass\n");
+        UhrWgSend(uhr, TID);//32 bites
+        return status;
+      }
     }
     if (status!=UHRERR_GOOD) return status;
     status = TagCheckFixPass(uhr, tag, MasterPass, TID);
@@ -632,19 +641,28 @@ int main(int argc, char *argv[]) {
       status = UhrCalcPass(TID, masterpass, &pkill, &pacc);
       printf("Passwords\n * kill 0x%8.8x\n * acc: 0x%8.8x\n", pkill, pacc);
 
+
+
       printf("TID:%x\n", rtaginfo.raw);
       if ((rtaginfo.raw&0xfffff)==0x180e2) { //Monza R6 do not supported passowrds
-        uint32_t kill,acc;
         //pkill=pacc=0;
 
-        status = UhrReadCardPass(uhr, 0, &acc, &kill);
+        printf("R6 checking\n");
+        status = UhrReadCardEPC(uhr, 0, &taginfo, &ETID);
+        if (taginfo.raw!=rtaginfo.raw) {
+          printf("WRONG TAG\n");
+        }
+        if (ETID!=TID) {
+          printf("WRONG TID\n");
+        }
         if (status ==0 ) {
-          printf("Pass read success\n");
-          printf("Kill: %x, acc: %x\n", acc, kill);
+          printf("EPC correct, success\n");
         } else {
           badpass=1;
-          printf("Error read passwords\n");
+          printf("EPC uncorrect, unsuccess\n");
+          return 1;
         }
+        return 0;
 
       }
 
