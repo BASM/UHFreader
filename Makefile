@@ -34,5 +34,4 @@ secret:
 	echo "-p 1122334455667788 -P 1234567801234567" > secret
 
 beep:
-	#sudo ./a.out -p 1122334455667788 -P 1234567801234567
-	sudo ./a.out -b
+	sudo ./test -b
