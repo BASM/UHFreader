@@ -515,6 +515,9 @@ static int TagCheckFixPass(uhrdev_t *uhr, uhrtag_t *tag, uint64_t MasterPass[2],
   return UHRERR_GOOD;
 }
 
+static uint32_t xor32(uint64_t a) {
+  return a^(a>>32);
+}
 
 
 int CheckAndFix(uhrdev_t *uhr, uint64_t MasterPass[2]) {
@@ -551,8 +554,10 @@ int CheckAndFix(uhrdev_t *uhr, uint64_t MasterPass[2]) {
     if (fixed) {
       printf("TAG INFO: %x\n", taginfo.raw&0xfffff);
       if ((taginfo.raw&0xfffff)==0x180e2) { //Monza R6 do not supported passowrds
-        printf("Minoza R6 send to WG without pass\n");
-        UhrWgSend(uhr, TID);//32 bites
+        uint32_t t32=xor32(TID);
+        
+        printf("Minoza R6 send to WG without pass %lx (%llx)\n", (long)t32, (long long)TID);
+        UhrWgSend(uhr, t32);//32 bites
         return status;
       }
     }
