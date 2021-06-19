@@ -544,30 +544,33 @@ int CheckAndFix(uhrdev_t *uhr, uint64_t MasterPass[2]) {
     TagTID2tag(&tidtag, &taginfo, &TID);
 
     if (memcmp(&tidtag, &tags[0], 13)==0) {
-      fixed=1;
+      //fixed=1;
+      //status==UHRERR_GOOD;
     } else {
       int singlemode=0;
       if (count==1) singlemode=1;
       status = TagChangeEPC(uhr, tag, &tidtag, singlemode);
       if (status==UHRERR_GOOD) fixed=1;
     }
-    if (fixed) {
-      printf("TAG INFO: %x\n", taginfo.raw&0xfffff);
-      if ((taginfo.raw&0xfffff)==0x180e2) { //Monza R6 do not supported passowrds
-        uint32_t t32=xor32(TID);
-        
-        printf("Minoza R6 send to WG without pass %lx (%llx)\n", (long)t32, (long long)TID);
-        UhrWgSend(uhr, t32);//32 bites
-        return status;
-      }
+
+    printf("TAG INFO: %x\n", taginfo.raw&0xfffff);
+    if ((taginfo.raw&0xfffff)==0x180e2) { //Monza R6 do not supported passowrds
+      uint32_t t32=xor32(TID);
+
+      printf("Minoza R6 send to WG without pass %lx (%llx)\n", (long)t32, (long long)TID);
+      UhrWgSend(uhr, t32);//32 bites
+      return status;
     }
+
     if (status!=UHRERR_GOOD) return status;
     status = TagCheckFixPass(uhr, tag, MasterPass, TID);
   }
   if ((status==UHRERR_GOOD)&&(fixed==1)) status=UHRERR_GOODFIX;
 
-  if (status==UHRERR_GOOD)
+  if (status==UHRERR_GOOD) {
+    printf("TID: %x\n", (uint32_t)TID);
       UhrWgSend(uhr, TID);//32 bites
+  }
 
   return status;
 }
